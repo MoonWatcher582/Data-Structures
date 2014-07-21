@@ -1,3 +1,14 @@
+from collections import deque
+
+def find_min_distance(distances):
+	smallest = distances.values[0]
+	ret = distances.keys[0]
+	for vert,dist in distances:
+		if dist < smallest:
+			smallest = dist
+			ret = vert
+	return ret		
+
 class Vector(object):
 
 	"""A vector for the Timbot's graph-map, consisting of degrees and magnitude."""
@@ -108,6 +119,35 @@ class Graph(object):
 		#essentially an alternative to the vertex's built-in add_edge function because I forgot I wrote this when I wrote them
 		vertex_one.add_edge(Edge(vector,vertex_two))
 		vertex_two.add_edge(Edge(vector,vertex_one))
+
+	def Dijkstra(self, start):
+		"""Find the shortest path from the start vertex to all other verticies."""
+		distances = {} #dictionary of final distances
+		previous = {} #dictionary of predecessors
+		to_visit = [] #visited list 
+		
+		#initialize
+		for v in self.vertex_list:
+			if v == start:
+				distances[v] = 0
+				#source vertex is 0 away from itself
+			else:
+				distances[v] = sys.maxint
+				#all other nodes are of a distance that has not yet been calculated
+			to_visit.append(v)	
+			#add all verticies to the visited queue
+		
+		#algorithm
+		while len(visited_queue) != 0:
+			v = find_min_distance(distances)
+			to_visit.remove(v)
+			for e in v.edge_list:
+				new_dist = distances[v] + e.vector.magnitude
+				if new_dist < distances[e.vertex]:
+					distances[e.vertex] = new_dist
+					previous[e.vertex] = v
+		
+		return distances, previous 						
 
 print Vector.__doc__
 print Edge.__doc__
